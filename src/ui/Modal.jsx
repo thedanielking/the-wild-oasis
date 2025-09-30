@@ -1,4 +1,8 @@
+import { cloneElement, createContext, useContext, useState } from "react";
+import { createPortal } from "react-dom";
+import { HiXMark } from "react-icons/hi2";
 import styled from "styled-components";
+import { useOutsideClick } from "../hooks/useOutsideClick";
 
 const StyledModal = styled.div`
   position: fixed;
@@ -48,3 +52,61 @@ const Button = styled.button`
     color: var(--color-grey-500);
   }
 `;
+
+//1. create context
+const ModalContext = createContext();
+
+//1a. create a parent component
+function Modal({children}){
+  const [openName, setOpenName] = useState("")
+
+//1b. create the state and the functions in the state.
+  const close = ()=> setOpenName("");
+  const open = (e)=> setOpenName(e);
+
+  return <ModalContext.Provider value={{openName, close, open}}>
+    {children}
+  </ModalContext.Provider>
+}  
+
+//2. create the children component and useContext from the parent context to enable the functions. 
+function Open({children, opens: opensWindowName}){
+  const {open} = useContext(ModalContext);
+
+  //cloneElement children to give it a prop. cloning the button and adding an onclick prop to it. SHOULDNT BE DONE ALWAYS!
+  return cloneElement(children, {onClick: ()=> open(opensWindowName)})
+}
+
+
+
+//create children prop
+function Window({children, name}) {
+  const {openName, close} = useContext(ModalContext);
+  const ref = useOutsideClick(close);
+
+  if(name !== openName) return null;
+
+  return createPortal (
+    <Overlay>
+      <StyledModal ref={ref}>
+        <Button onClick={close}>
+          <HiXMark />
+        </Button>
+        <div>
+          {cloneElement(children, {onCloseModal: close})}
+        </div>
+      </StyledModal>
+    </Overlay>,
+    document.body
+  )
+}
+
+
+
+//3. add child components as properties to the parent components.
+Modal.Open = Open
+Modal.Window = Window
+
+
+
+export default Modal;

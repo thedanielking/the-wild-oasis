@@ -11,6 +11,7 @@ export async function getSettings() {
 }
 
 // We expect a newSetting object that looks like {setting: newValue}
+//update the rls policy on supabase
 export async function updateSetting(newSetting) {
   const { data, error } = await supabase
     .from("settings")
