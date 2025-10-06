@@ -1,6 +1,47 @@
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
+import {PAGE_SIZE} from "../utils/constants";
 
+
+export async function getBookings({filter, sortBy, page}){
+  let query = supabase
+  .from("bookings")
+  .select("id, created_at, startDate, endDate, numNights, numGuests, status, totalPrice, cabins(*), guests:guestId(*)" , {count: "exact"})
+
+  // for getting cabins and guest details for the booking
+  //instead of "*" you can write out all the fields you would need to prevent loading huge data for better performance but separated by comma. 
+  //the {count: "exact"} object queries the length of the data;
+
+  //FILTER
+  if(filter) query[filter.method](filter.field, filter.value)
+
+  //SORT
+  if(sortBy)
+    query = query.order(sortBy.field, {
+    ascending: sortBy.direction === "asc"
+  });
+
+  //PAGINATION
+  if(page) {
+    const from = (page-1) * (PAGE_SIZE -1)
+    const to= from + PAGE_SIZE - 1
+    query = query.range(from, to)
+  }
+
+  const {data, error, count} = await query
+
+  if (error) {
+    console.error(error);
+    throw new Error("Bookings could not be loaded");
+  }
+
+  return {data, count};
+
+
+}
+
+
+//this is for one individual booking
 export async function getBooking(id) {
   const { data, error } = await supabase
     .from("bookings")
