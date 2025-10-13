@@ -17,21 +17,25 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 import Booking from "./pages/Booking";
 import ProtectedRoute from "./ui/ProtectedRoute";
+import { DarkModeProvider } from "./context/DarkModeContext";
 
 function App() {
 
+  //setting up react query
+  //1. create queryClient.
   const queryClient = new QueryClient({
     defaultOptions: {
-      //staleTime: 60 * 1000, // this is the amount of time the data will stay fresh
-      staleTime: 0,
+      //staleTime: 60 * 1000, // this is the amount of time the data will stay fresh - 1min(60sec)
+      staleTime: 0, //always stay fresh
     }
   })
 
-  //provide the react query just like context api. 
+  //2. provide the react query just like context api. 
   return (
+  <DarkModeProvider>
     <QueryClientProvider client={queryClient}>
     <ReactQueryDevtools />
-    <GlobalStyles />
+    <GlobalStyles /> {/*cant accept children.must be sibling */}
     <BrowserRouter>
       <Routes>
         <Route element={
@@ -71,8 +75,9 @@ function App() {
         color: "var(--color-grey-700)"
       }
     }}
-     />
+    />
     </QueryClientProvider> 
+  </DarkModeProvider>
   )
 }
 

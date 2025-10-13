@@ -120,9 +120,9 @@ function BookingRow({
           }
 
           <Modal.Open opens="delete">
-            <Modal.Button icon={<HiTrash />}>
+            <Menus.Button icon={<HiTrash />}>
               Delete booking
-            </Modal.Button>
+            </Menus.Button>
           </Modal.Open> 
 
           <Modal.Window name="delete">

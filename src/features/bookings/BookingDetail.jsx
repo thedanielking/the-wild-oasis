@@ -18,6 +18,7 @@ import { useBooking } from "./useBooking";
 import { useMoveBack } from "../../pages/hooks/useMoveBack";
 import { useCheckout } from "../check-in-out/useCheckout";
 import { useDeleteBooking } from "./useDeleteBooking";
+import Empty from "../../ui/Empty";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -34,7 +35,8 @@ function BookingDetail() {
 
   const moveBack = useMoveBack();
 
-  if(isLoading) return <Spinner />
+  if(isLoading) return <Spinner />;
+  if(!booking) return <Empty resourceName="booking" />
 
   const {status, id: bookingId} = booking;
 
@@ -76,7 +78,7 @@ function BookingDetail() {
         <Modal>
           <Modal.Open opens="delete">
             <Button variation="danger">
-              Delete <Booking></Booking>
+              Delete Booking
             </Button>
           </Modal.Open>
           <Modal.Window name="delete">

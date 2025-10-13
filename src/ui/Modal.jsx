@@ -102,10 +102,18 @@ function Window({children, name}) {
 }
 
 
+function ButtonG({children}){
+  return <Button>
+    {children}
+    </Button>
+}
+
+
 
 //3. add child components as properties to the parent components.
 Modal.Open = Open
 Modal.Window = Window
+Modal.Button = ButtonG
 
 
 
